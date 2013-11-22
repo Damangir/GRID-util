@@ -143,13 +143,94 @@ hr {
 <body>
 <h1>GRID-util: Utility script for work with the N4U Grid</h1>
 
+<h2>Installation</h2>
+
+<p>Download the package using <code>curl</code></p>
+
+<pre><code class="bash">curl -O https://github.com/Damangir/GRID-util/archive/master.zip
+</code></pre>
+
+<p>or using <code>wget</code></p>
+
+<pre><code class="bash">wget https://github.com/Damangir/GRID-util/archive/master.zip
+</code></pre>
+
+<p>Then decopmress the files.</p>
+
+<pre><code class="bash">unzip master.zip
+</code></pre>
+
+<p>If you have administrative right install using:</p>
+
+<pre><code class="bash">sudo cp -r $(pwd)/GRID-util-master/src/ /usr/local/bin/GRID-util
+export PATH=$PATH:/usr/local/bin/GRID-util
+</code></pre>
+
+<p>otherwise use:</p>
+
+<pre><code class="bash">export PATH=$PATH:$(pwd)/GRID-util-master/src/
+</code></pre>
+
+<p>Now you can check installation by:</p>
+
+<pre><code class="bash">gridcopy.sh -h
+</code></pre>
+
+<h2>Manual</h2>
+
+<h3>Copy files to/from storage element</h3>
+
+<p>You can use <code>gridcopy.sh</code> to copy batch files between user interface and storage elemet back and forth.</p>
+
+<pre><code>usage: gridcopy.sh options
+
+Copies batch of files back and forth to the grid.
+
+OPTIONS:
+   -l      Local directory (in interface, e.g. ~/MyShares/n4u/to-process)
+   -g      Grid directory  (in the grid)
+   -p      Pattern for files to be copied (default *.nii.gz)
+
+   -d      Download images from the GRID
+   -u      Upload images to the GRID (default)
+   -r      Retry count on copy failure (default 5)
+
+   -f      Run from fail file generated with previous runs. This option will 
+           supress all other options.
+
+   -h      Show this message
+</code></pre>
+
+<p>For example in order to copy all <code>nii.gz</code> files from <code>~/MyShares/to-process</code> folder in user interface to <code>$PANDORA_GRID_HOME/input</code> storage element you can use:</p>
+
+<pre><code class="bash">gridcopy.sh -l ~/MyShares/to-process -g $PANDORA_GRID_HOME/input -p &quot;*.nii.gz&quot; -u
+</code></pre>
+
+<p>After you process data, suppose the your output is in <code>$PANDORA_GRID_HOME/output</code> and is in <code>tar.bz</code> format. To bring them back to <code>~/MyShares/processed</code> you can use:</p>
+
+<pre><code class="bash">gridcopy.sh -g $PANDORA_GRID_HOME/output -l ~/MyShares/processed -p &quot;*.tar.bz&quot; -d
+</code></pre>
+
+<p>The <code>gridcopy.sh</code> will produce a file called <code>copy_fail</code>. If any copy failed you will be notified with a note like:</p>
+
+<pre><code>There is/are 1 failing(s) in the batch process. The failing processes are written in copy_fail_131122_175431.sh.                                                                                                                                        
+You can re-run them using gridcopy.sh -f copy_fail_131122_175431.sh
+</code></pre>
+
+<p>As adviced in the note you can re-run failed copies using:</p>
+
+<pre><code class="bash">gridcopy.sh -f copy_fail_131122_175431.sh
+</code></pre>
+
+<p>The digits at the end the file name means its for the copying on 22 November 2013 17:54:31. If you have many <code>copy_fail</code> files, make sure you are using the one you intend to use.</p>
+
 <h2>Copyright</h2>
 
 <p>Copyright &copy; 2013 Soheil Damangir - All Rights Reserved</p>
 
 <h2>Licence</h2>
 
-<p><a href="http://creativecommons.org/licenses/by-nc-nd/3.0/"><img src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" alt="Creative Commons License" title="Creative Commons License"/></a></p>
+<p><a href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img src="https://raw.github.com/Damangir/GRID-util/master/licence.png" alt="Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License" title="Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License"/></a></p>
 
 <p>GRID-util by <a href="http://www.linkedin.com/in/soheildamangir">Soheil Damangir</a> is licensed under a <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>. To view a copy of this license, visit <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">http://creativecommons.org/licenses/by-nc-sa/3.0/</a>.</p>
 

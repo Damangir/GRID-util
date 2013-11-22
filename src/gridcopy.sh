@@ -24,7 +24,7 @@
 usage()
 {
 cat << EOF
-${bold}usage${normal}: $0 options
+${bold}usage${normal}: $(basename $0) OPTIONS
 
 Copies batch of files back and forth to the grid.
 
@@ -166,6 +166,6 @@ exit_val=$?
 if [ -s "$fail_file" ]
 then
   echo_wrap "There is/are $( wc -l < $fail_file ) failing(s) in the batch process. The failing processes are written in $fail_file."
-  echo_wrap "You can re-run them using $0 -f $fail_file"
+  echo_wrap "You can re-run them using $(basename $0) -f $fail_file"
 fi
 exit $exit_val
