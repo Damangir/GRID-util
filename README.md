@@ -17,16 +17,22 @@ unzip master.zip
 ```
 If you have administrative right install using:
 ```bash
-sudo cp -r $(pwd)/GRID-util-master/src/ /usr/local/bin/GRID-util
-export PATH=$PATH:/usr/local/bin/GRID-util
+sudo -s
+. GRID-util-master/install.sh
 ```
 otherwise use:
 ```bash
-export PATH=$PATH:$(pwd)/GRID-util-master/src/
+. GRID-util-master/install.sh
 ```
 Now you can check installation by:
 ```bash
 gridcopy.sh -h
+```
+
+If you install in admin mode and ever want to uninstall GRID-util you can do so by:
+```bash
+sudo su -
+uninstall-GRID-util
 ```
 
 Manual
