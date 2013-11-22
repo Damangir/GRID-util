@@ -17,7 +17,7 @@ unzip master.zip
 ```
 If you have administrative right install using:
 ```bash
-sudo -s
+sudo su
 . GRID-util-master/install.sh
 ```
 otherwise use:
