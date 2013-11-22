@@ -49,16 +49,16 @@ run_from_file()
   export err_file=${SAFE_TMP_DIR}/"failed_"$(date '+%y%m%d_%H%M%S')".sh"
   export retry
   export -f retry_run
-
+  local NUMCPU=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || echo 1)
   if [ "$(command -v pv)" ]
   then
     local process_size=$(wc -c < $the_file )
-    pv -s $process_size -W -p -t -e $the_file
+    pv -s $process_size -W -p -t -e $the_file | xargs -n1 -P $NUMCPU  -I{} bash -c 'retry_run "$1" || echo $1 | tee -a $err_file >&2' _ {} 2>/dev/null
   else
     echo_warning "pv is not installed in your system. It is thus not possible to monitor the progress. Please be patient, the process may take several minutes."
     export PRINTDOTS="YES"
-    cat $the_file | xargs -n1 -P1 -I{} bash -c 'retry_run "$1" || echo $1 | tee -a $err_file >&2' _ {} 2>/dev/null
-    echo
+    cat $the_file | xargs -n1 -P $NUMCPU  -I{} bash -c 'retry_run "$1" || echo $1 | tee -a $err_file >&2' _ {} 2>/dev/null
+    echo "Done"
   fi
   if [ "${2}" ]
   then

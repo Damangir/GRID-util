@@ -46,6 +46,8 @@ EOF
 
 source $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/util.sh
 
+[ -z "$1" ] && usage && exit
+
 local_dir=~
 grid_dir=$PANDORA_GRID_HOME
 pattern="*.nii.gz"
@@ -106,7 +108,7 @@ then
   fail_file="copy_fail_"$(date '+%y%m%d_%H%M%S')".sh"
 else
   # Sanity check
-  [ -d "$local_dir" ] && echo_fatal "Local directory (${local_dir}) should be directory."
+  ! [ -d "$local_dir" ] && echo_fatal "Local directory (${local_dir}) should be directory."
 
   if [ "${upload}" ]
   then
@@ -142,7 +144,7 @@ else
     echo_wrap "Copying files with pattern ${pattern} from the grid ($grid_dir) to local interface ($local_dir)"
 
     runname "Generating list of files to be copied. It may take a few minute."
-    FILES=$( retry_run lcg-ls lfn:${grid_dir} | grep -E ${pattern} )
+    FILES=$( lcg-ls lfn:${grid_dir} | grep -E "${pattern}" )
     if [ $? -ne 0 ]
     then
       rundone 1
@@ -158,6 +160,7 @@ else
   fi
 fi
 
+echo_wrap "$(wc -l < $run_file ) file is going to be copied."
 run_from_file $run_file $fail_file
 exit_val=$?
 if [ -s "$fail_file" ]
