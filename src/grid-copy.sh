@@ -144,7 +144,7 @@ else
     echo_wrap "Copying files with pattern ${pattern} from the grid ($grid_dir) to local interface ($local_dir)"
 
     runname "Generating list of files to be copied. It may take a few minute."
-    FILES=$( lcg-ls lfn:${grid_dir} | grep -E "${pattern}" )
+    FILES=$( retry_run "lcg-ls lfn:${grid_dir}" | grep -E "${pattern}" )
     if [ $? -ne 0 ]
     then
       rundone 1

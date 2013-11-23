@@ -1,4 +1,5 @@
 #! /bin/bash
+[ "$_" == "$0" ] && is_script="YES"
 
 if [ "$1" == "uninstall" ]
 then
@@ -15,13 +16,14 @@ then
     fi
   fi
 else
-  if [[ $_ != $0 ]]
+  if [[ -n "$is_script" ]]
   then
-    echo "You should source this file for temporary setup. Try:"
+    echo "You should source this file for setup. Try:"
     echo "source $0 $@"
     exit 1
   fi
 
+  
   if [ "$(id -u)" == "0" ]; then
     cp -r $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/src /usr/local/bin/GRID-util
     echo "export PATH=\$PATH:/usr/local/bin/GRID-util" > /etc/profile.d/GRID-util.sh

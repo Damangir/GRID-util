@@ -25,21 +25,16 @@ fi
 
 retry_run()
 {
+  local out_file=$(mktemp -p $SAFE_TMP_DIR)
   [ -z "$retry" ] && retry=5
   [[ "$retry" =~ '^[0-9]+$' ]] && retry=5
   for i in $(eval echo {1..$retry})
   do
-    if [ "$PRINTDOTS" ]
-    then
-      $@ &>/dev/null
-      local retval=$?    
-    else
-      $@ 2>/dev/null
-      local retval=$?
-    fi
+    $@ 1>$out_file 2>/dev/null
+    local retval=$?
     [ $retval -eq 0 ] && break
   done
-  [ "$PRINTDOTS" ] && echo -n "."
+  [ "$PRINTDOTS" ] && echo -n "." || cat $out_file
   return $retval
 }
 

@@ -173,7 +173,7 @@ hr {
 
 <p>Now you can check installation by:</p>
 
-<pre><code class="bash">gridcopy.sh -h
+<pre><code class="bash">grid-copy.sh -h
 </code></pre>
 
 <p>If you install in admin mode and ever want to uninstall GRID-util you can do so by:</p>
@@ -186,9 +186,9 @@ uninstall-GRID-util
 
 <h3>Copy files to/from storage element</h3>
 
-<p>You can use <code>gridcopy.sh</code> to copy batch files between user interface and storage elemet back and forth.</p>
+<p>You can use <code>grid-copy.sh</code> to copy batch files between user interface and storage elemet back and forth.</p>
 
-<pre><code>usage: gridcopy.sh options
+<pre><code>usage: grid-copy.sh options
 
 Copies batch of files back and forth to the grid.
 
@@ -209,23 +209,23 @@ OPTIONS:
 
 <p>For example in order to copy all <code>nii.gz</code> files from <code>~/MyShares/to-process</code> folder in user interface to <code>$PANDORA_GRID_HOME/input</code> storage element you can use:</p>
 
-<pre><code class="bash">gridcopy.sh -l ~/MyShares/to-process -g $PANDORA_GRID_HOME/input -p &quot;*.nii.gz&quot; -u
+<pre><code class="bash">grid-copy.sh -l ~/MyShares/to-process -g $PANDORA_GRID_HOME/input -p &quot;*.nii.gz&quot; -u
 </code></pre>
 
 <p>After you process data, suppose the your output is in <code>$PANDORA_GRID_HOME/output</code> and is in <code>tar.bz</code> format. To bring them back to <code>~/MyShares/processed</code> you can use:</p>
 
-<pre><code class="bash">gridcopy.sh -g $PANDORA_GRID_HOME/output -l ~/MyShares/processed -p &quot;*.tar.bz&quot; -d
+<pre><code class="bash">grid-copy.sh -g $PANDORA_GRID_HOME/output -l ~/MyShares/processed -p &quot;*.tar.bz&quot; -d
 </code></pre>
 
-<p>The <code>gridcopy.sh</code> will produce a file called <code>copy_fail</code>. If any copy failed you will be notified with a note like:</p>
+<p>The <code>grid-copy.sh</code> will produce a file called <code>copy_fail</code>. If any copy failed you will be notified with a note like:</p>
 
 <pre><code>There is/are 1 failing(s) in the batch process. The failing processes are written in copy_fail_131122_175431.sh.                                                                                                                                        
-You can re-run them using gridcopy.sh -f copy_fail_131122_175431.sh
+You can re-run them using grid-copy.sh -f copy_fail_131122_175431.sh
 </code></pre>
 
 <p>As adviced in the note you can re-run failed copies using:</p>
 
-<pre><code class="bash">gridcopy.sh -f copy_fail_131122_175431.sh
+<pre><code class="bash">grid-copy.sh -f copy_fail_131122_175431.sh
 </code></pre>
 
 <p>The digits at the end the file name means its for the copying on 22 November 2013 17:54:31. If you have many <code>copy_fail</code> files, make sure you are using the one you intend to use.</p>
