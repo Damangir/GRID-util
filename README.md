@@ -15,7 +15,8 @@ Table of Content
 Introduction
 -------
 Grid-util is a set of tool to facilitate working with the [N4U grid](https://neugrid4you.eu/) in the command-line mode.
-Grid-util is not endorsed by the [N4U Consortium](https://neugrid4you.eu/partners).
+
+**Grid-util is NOT endorsed by the [N4U Consortium](https://neugrid4you.eu/partners).**
 
 Installation
 -------
