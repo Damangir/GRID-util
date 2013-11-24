@@ -1,6 +1,22 @@
 GRID-util: Utility script for work with the N4U Grid
 =======
 
+Table of Content
+-------
+
+* [Introduction](#introduction)
+* [Installation](#installation)
+* [Manual](#manual)
+  * [Copy files between user interface and storage element back and forth](#copy-files-tofrom-storage-element)
+  * [Automatic jobfile creation](#create-a-job-file-automatically)
+* [Copyright](#copyright)
+* [License](#license)
+
+Introduction
+-------
+Grid-util is a set of tool to facilitate working with the [N4U grid](https://neugrid4you.eu/) in the command-line mode.
+Grid-util is not endorsed by the [N4U Consortium](https://neugrid4you.eu/partners).
+
 Installation
 -------
 Download the package using `curl`
@@ -83,11 +99,30 @@ grid-copy.sh -f copy_fail_131122_175431.sh
 
 The digits at the end the file name means its for the copying on 22 November 2013 17:54:31. If you have many `copy_fail` files, make sure you are using the one you intend to use.
 
+### Create a job file automatically
+
+You can use `grid-jobfile.sh` to create a [jobfile](https://neugrid4you.eu/group/science-gateway/knowledge-base/-/wiki/Main/Express+Lane) when you want to run jobs with `inputDir` located in the grid storage elements (`lfn:`).
+
+```
+usage: grid-jobfile.sh OPTIONS
+
+Creates job file for files in a directory.
+
+OPTIONS:
+   -g      Grid directory  (in the grid)
+   -p      Pattern for files to be added to jobfile (default *.nii.gz)
+   -o      Output Jobfile (default only prints it)
+   -r      Retry count on copy failure (default 5)
+   
+   -h      Show this message
+```
+
+
 Copyright
 -------
-Copyright (C) 2013 Soheil Damangir - All Rights Reserved
+Copyright (C) 2013 [Soheil Damangir](http://www.linkedin.com/in/soheildamangir) - All Rights Reserved
 
-Licence
+License
 -------
 [![Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License](https://raw.github.com/Damangir/GRID-util/master/licence.png "Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License")](http://creativecommons.org/licenses/by-nc-sa/3.0/)
 
