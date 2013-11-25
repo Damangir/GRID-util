@@ -26,16 +26,14 @@ usage()
 cat << EOF
 ${bold}usage${normal}: $(basename $0) OPTIONS
 
-Copies batch of files back and forth to the grid.
+Delete batch of files from the grid.
 
 ${bold}OPTIONS$normal:
-   -l      Local directory (in interface, e.g. ~/MyShares/n4u/to-process)
    -g      Grid directory  (in the grid)
-   -p      Pattern for files to be copied (default *.nii.gz)
+   -p      Pattern for files to be copied. If you do not specify the pattern,
+           the whole directry and its content will be deleted.
 
-   -d      Download images from the GRID
-   -u      Upload images to the GRID (default)
-   -r      Retry count on copy failure (default 5)
+   -r      Retry count on failure (default 5)
    
    -f      Run from fail file generated with previous runs. This option will 
            supress all other options.
@@ -48,16 +46,13 @@ source $( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/util.sh
 
 [ -z "$1" ] && usage && exit
 
-local_dir=~
 grid_dir=$PANDORA_GRID_HOME
-pattern="*.nii.gz"
-upload="YES"
-download=
+pattern=""
 retry=5
 fail_file="copy_fail_"$(date '+%y%m%d_%H%M%S')".sh"
 run_file=${SAFE_TMP_DIR}/run_file.sh
 
-while getopts “l:g:p:dur:f:h” OPTION
+while getopts “l:g:p:r:f:h” OPTION
 do
   case $OPTION in
     l)
@@ -100,49 +95,17 @@ then
   cp "$fail_file" "$run_file"
   fail_file="copy_fail_"$(date '+%y%m%d_%H%M%S')".sh"
 else
-  # Sanity check
-
   if [[ "$grid_dir" != /grid/vo.neugrid.eu/* ]]
   then
     echo_fatal "Grid directory should start with /grid/vo.neugrid.eu/. If you meant to point to your grid home use \$PANDORA_GRID_HOME as the handler (in the way you use ~ in your local computer). E.g. \$PANDORA_GRID_HOME/input"
   fi
+  # COPY FROM STORAGE ELEMENT TO USER INTERFACE
+  echo_wrap "Deleting files with pattern ${pattern} from the grid ($grid_dir)"
 
-  if [ "${upload}" ]
+  runname "Generating list of files to be deleted. It may take a few minute."
+  if [ "${pattern}" ]
   then
-    ! [ -d "$local_dir" ] && echo_fatal "Local directory (${local_dir}) should be directory."
-    ! [ -r "$local_dir" ] && echo_fatal "Local directory (${local_dir}) should be readable for uploading."
-    retry_run "lcg-ls lfn:${grid_dir} -d" >/dev/null || echo_wrap "${grid_dir} does not exist. Will be created." && retry_run "lfc-mkdir lfn:${grid_dir} -p -m 700" || echo_fatal "Can not create directory at lfn:${grid_dir}"
-  else
-    ! [ -d "$local_dir" ] && echo_fatal "Local directory (${local_dir}) should be directory."
-    ! [ -w "$local_dir" ] && echo_fatal "Local directory (${local_dir}) should be wriatable for downloading."
-  fi
-
-  >$run_file
-  if [ "${upload}" ]
-  then
-    # COPY FROM USER INTERFACE TO STORAGE ELEMENT
-    echo_wrap "Copying files with pattern ${pattern} from local interface ($local_dir) to the grid ($grid_dir)"
-
-    runname "Generating list of files to be copied. It may take a few minute."
-    FILES=$(find "$local_dir" -maxdepth 1 -wholename "*$pattern*" -type f)
-    if [ $? -ne 0 ]
-    then
-      rundone 1
-      echo_fatal "Can not read the files from lfn:${grid_dir}"
-    fi
-    rundone 0
-
-    for tocopy in $FILES
-    do
-      command_to_run="lcg-cr --vo vo.neugrid.eu -l lfn:${grid_dir}/$(basename $tocopy) file:${tocopy}"
-      echo $command_to_run >> $run_file
-    done
-
-  else
-    # COPY FROM STORAGE ELEMENT TO USER INTERFACE
-    echo_wrap "Copying files with pattern ${pattern} from the grid ($grid_dir) to local interface ($local_dir)"
-
-    runname "Generating list of files to be copied. It may take a few minute."
+    >$run_file
     FILES=$( retry_run "lcg-ls lfn:${grid_dir}" | grep -E "${pattern}" )
     if [ $? -ne 0 ]
     then
@@ -151,15 +114,17 @@ else
     fi
     rundone 0
 
-    for tocopy in $FILES
+    for todelete in $FILES
     do
-      command_to_run="lcg-cp lfn:${grid_dir}/$(basename $tocopy) ${local_dir}/$(basename $tocopy)"
+      command_to_run="lfc-rm -f lfn:${grid_dir}/$(basename $todelete)"
       echo $command_to_run >> $run_file
     done
+  else
+    echo "lfc-rm -f -r lfn:${grid_dir}" > $run_file
   fi
 fi
 
-echo_wrap "$(wc -l < $run_file ) file is going to be copied."
+echo_wrap "$(wc -l < $run_file ) item is going to be beleted."
 run_all_from_file $run_file $fail_file
 exit_val=$?
 if [ -s "$fail_file" ]

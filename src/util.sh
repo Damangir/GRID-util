@@ -26,19 +26,21 @@ fi
 retry_run()
 {
   local out_file=$(mktemp -p $SAFE_TMP_DIR)
+  local err_file=$(mktemp -p $SAFE_TMP_DIR)
   [ -z "$retry" ] && retry=5
   [[ "$retry" =~ '^[0-9]+$' ]] && retry=5
   for i in $(eval echo {1..$retry})
   do
-    $@ 1>$out_file 2>/dev/null
+    $@ 1>$out_file 2>$errfile
     local retval=$?
     [ $retval -eq 0 ] && break
   done
-  [ "$PRINTDOTS" ] && echo -n "." || cat $out_file
+  [ "$PRINTDOTS" ] && printf "." || cat $out_file
+  cat $err_file >&2
   return $retval
 }
 
-run_from_file()
+run_all_from_file()
 {
   local the_file="$1"
   export err_file=${SAFE_TMP_DIR}/"failed_"$(date '+%y%m%d_%H%M%S')".sh"
@@ -55,14 +57,43 @@ run_from_file()
     cat $the_file | xargs -n1 -P $NUMCPU  -I{} bash -c 'retry_run "$1" || echo $1 | tee -a $err_file >&2' _ {} 2>/dev/null
     echo "Done"
   fi
-  if [ "${2}" ]
+  if [ -s "${err_file}" ]
   then
-    mv "${err_file}" "${2}" 2>/dev/null
-  else
-    mv "${err_file}" . 2>/dev/null
+    if [ "${2}" ]
+    then
+      mv "${err_file}" "${2}" 2>/dev/null
+    else
+      mv "${err_file}" . 2>/dev/null
+    fi
   fi
   unset err_file
 }
+
+run_seq_from_file()
+{
+  local the_file="$1"
+  local stdout_file=${SAFE_TMP_DIR}/"stdout_"$(date '+%y%m%d_%H%M%S')".txt"
+  local stderr_file=${SAFE_TMP_DIR}/"stderr_"$(date '+%y%m%d_%H%M%S')".txt"
+
+  while read cmd_line
+  do
+    printf "#####\n# RUNNING ${cmd_line}\n#####\n" 1>>$stdout_file
+    printf "#####\n# RUNNING ${cmd_line}\n#####\n" 2>>$stderr_file
+    retry_run "${cmd_line}" 1>>$stdout_file 2>>$stderr_file
+    local retval=$?
+    if [ $retval -ne 0 ]
+    then
+      printf "#####\n# COMMAND ${cmd_line} FAILED\n#####\n" 1>>$stdout_file
+      printf "#####\n# COMMAND ${cmd_line} FAILED\n#####\n" 2>>$stderr_file      
+      break
+    fi
+  done < $the_file
+
+  [ -s "${stdout_file}" ] && mv "${stdout_file}" . 2>/dev/null
+  [ -s "${stderr_file}" ] && mv "${stderr_file}" . 2>/dev/null
+  return $retval
+}
+
 
 
 echo_wrap()
