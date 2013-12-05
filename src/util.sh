@@ -31,7 +31,7 @@ retry_run()
   [[ "$retry" =~ '^[0-9]+$' ]] && retry=5
   for i in $(eval echo {1..$retry})
   do
-    $@ 1>$out_file 2>$errfile
+    $@ 1>$out_file 2>$err_file
     local retval=$?
     [ $retval -eq 0 ] && break
   done
