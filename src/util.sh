@@ -35,7 +35,12 @@ retry_run()
     local retval=$?
     [ $retval -eq 0 ] && break
   done
-  [ "$PRINTDOTS" ] && printf "." || cat $out_file
+  if [ "$PRINTDOTS" ]
+  then
+    printf "."
+  else
+    cat $out_file
+  fi
   cat $err_file >&2
   return $retval
 }
