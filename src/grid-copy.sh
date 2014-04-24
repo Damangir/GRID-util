@@ -115,7 +115,7 @@ else
     if [ $? -ne 0 ]
     then
       echo_wrap "${grid_dir} does not exist. Will be created."
-      retry_run "lfc-mkdir lfn:${grid_dir} -p -m 700" || echo_fatal "Can not create directory at lfn:${grid_dir}"
+      retry_run "lfc-mkdir ${grid_dir} -p -m 700" || echo_fatal "Can not create directory at lfn:${grid_dir}"
     fi
   else
     ! [ -d "$local_dir" ] && echo_fatal "Local directory (${local_dir}) should be directory."
