@@ -37,7 +37,12 @@ retry_run()
   done
   if [ "$PRINTDOTS" ]
   then
-    printf "."
+    if [$retval -eq 0]
+    then
+      printf "."
+    else
+      printf "x"
+    fi
   else
     cat $out_file
   fi
