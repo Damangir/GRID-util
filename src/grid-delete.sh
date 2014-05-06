@@ -116,7 +116,7 @@ else
 
     for todelete in $FILES
     do
-      command_to_run="lfc-rm -f lfn:${grid_dir}/$(basename $todelete)"
+      command_to_run="lcg-del -a lfn:${grid_dir}/$(basename $todelete)"
       echo $command_to_run >> $run_file
     done
   else
