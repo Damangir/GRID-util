@@ -37,7 +37,7 @@ retry_run()
   done
   if [ "$PRINTDOTS" ]
   then
-    if [$retval -eq 0]
+    if [ $retval -eq 0 ]
     then
       printf "."
     else
