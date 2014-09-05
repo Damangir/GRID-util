@@ -1,0 +1,2 @@
+#! /bin/bash
+glite-wms-job-status -i $1 --noint | grep 'Current Status' | sort | uniq -c 
